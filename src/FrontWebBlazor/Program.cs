@@ -17,7 +17,10 @@ namespace FrontWebBlazor
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddTransient(sp => new HttpClient 
+            { 
+                BaseAddress = new Uri("https://heroapp-apim.azure-api.net/api/")
+            });
 
             await builder.Build().RunAsync();
         }
