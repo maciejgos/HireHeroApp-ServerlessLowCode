@@ -1,9 +1,9 @@
 ### Get hero requests
-GET https://heroapp-apim.azure-api.net/api/hero/requests HTTP/1.1
+GET https://heroapp-apim.azure-api.net/api/requests HTTP/1.1
 Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
 
 ### Request for hero lookup
-GET https://heroapp-apim.azure-api.net/api/request/1 HTTP/1.1
+GET https://heroapp-apim.azure-api.net/api/requests/1 HTTP/1.1
 Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
 
 ### Lookup for hero
