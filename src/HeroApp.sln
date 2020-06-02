@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackofficeApp", "Backoffice
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrontWebBlazor", "FrontWebBlazor\FrontWebBlazor.csproj", "{A506F6DF-17BA-4F55-90F3-C31C1DD7B788}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackofficeWebBlazor", "BackofficeWebBlazor\BackofficeWebBlazor.csproj", "{905592FC-A4EF-4A15-841C-54BD991AA352}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A506F6DF-17BA-4F55-90F3-C31C1DD7B788}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A506F6DF-17BA-4F55-90F3-C31C1DD7B788}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A506F6DF-17BA-4F55-90F3-C31C1DD7B788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{905592FC-A4EF-4A15-841C-54BD991AA352}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{905592FC-A4EF-4A15-841C-54BD991AA352}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{905592FC-A4EF-4A15-841C-54BD991AA352}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{905592FC-A4EF-4A15-841C-54BD991AA352}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
