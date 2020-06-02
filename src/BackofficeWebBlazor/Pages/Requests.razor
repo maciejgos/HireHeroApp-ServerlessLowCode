@@ -1,0 +1,46 @@
+﻿@page "/requests"
+@inject HttpClient Http
+
+@using System.Linq;
+
+<h3>New requests</h3>
+
+@if(requests == null || requests.Length == 0)
+{
+    <p><em>No new requests available</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Requester</th>
+                <th>Powers</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in requests)
+            {
+                <tr>
+                    <td>@request.Id</td>
+                    <td>@request.Fullname</td>
+                    <td>@request.Powers</td>
+                    <td>@request.Email</td>
+                    <td>
+                        <button type="button" class="btn btn-primary">Proposal</button>
+                        <button type="button" class="btn btn-warning">Refuse</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private BackofficeWebBlazor.Models.HeroRequest[] requests;
+
+    protected override async Task OnInitializedAsync() => requests = (await new BackofficeWebBlazor.Services.RequestsService().GetRequests()).ToArray();
+}

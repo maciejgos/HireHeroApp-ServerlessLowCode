@@ -1,0 +1,46 @@
+### Get hero requests
+GET https://heroapp-apim.azure-api.net/api/requests HTTP/1.1
+Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
+
+### Request for hero lookup
+GET https://heroapp-apim.azure-api.net/api/requests/1 HTTP/1.1
+Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
+
+### Lookup for hero
+POST https://heroapp-apim.azure-api.net/api/search HTTP/1.1
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
+
+{
+    "power":"superhuman strength"
+}
+
+### Prepare offer for client
+POST https://heroapp-apim.azure-api.net/api/proposal HTTP/1.1
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
+
+{
+    "offerId": "dbb31865-63e1-4e95-b0ba-eb2e8bdc47f1",
+    "status": "propose",
+    "hero": {
+        "name":"Spider-man",
+        "powers":[
+            "superhuman strength",
+            "spider-sense"
+        ],
+        "hourRate":1000.25,
+        "currency":"$"
+    }
+}
+
+### No offer for client
+POST https://heroapp-apim.azure-api.net/api/proposal HTTP/1.1
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
+
+{
+    "offerId": "dbb31865-63e1-4e95-b0ba-eb2e8bdc47f1",
+    "status": "nooffer",
+    "hero": null
+}

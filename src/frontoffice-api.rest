@@ -1,0 +1,31 @@
+### Request for hero
+POST https://heroapp-apim.azure-api.net/api/hero/request HTTP/1.1
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
+
+{
+    "powers":[
+        "superhuman strength",
+        "spider-sense"
+    ]
+}
+
+### Offer for hero accepted
+POST https://heroapp-apim.azure-api.net/api/offer HTTP/1.1
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
+
+{
+    "offerId": "dbb31865-63e1-4e95-b0ba-eb2e8bdc47f1",
+    "status": "accepted"
+}
+
+### Offer for hero accepted
+POST https://heroapp-apim.azure-api.net/api/offer HTTP/1.1
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
+
+{
+    "offerId": "dbb31865-63e1-4e95-b0ba-eb2e8bdc47f1",
+    "status": "refused"
+}

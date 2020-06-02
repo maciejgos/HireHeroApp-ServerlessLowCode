@@ -1,0 +1,43 @@
+@page "/requestForm"
+@inject NavigationManager NavigationManager
+
+<h1>Hero request form</h1>
+
+<EditForm Model="@heroRequest" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="requestedPowers">Request powers</label>
+        <InputText class="form-control" id="requestedPowers" aria-describedby="requestedPowers" @bind-Value="heroRequest.Powers" />
+    </div>
+
+    <div class="form-group">
+        <label for="firstname">First name</label>
+        <InputText class="form-control" id="firstname" aria-describedby="firstname" @bind-Value="heroRequest.Firstname" />
+    </div>
+
+    <div class="form-group">
+        <label for="lastname">Last name</label>
+        <InputText class="form-control" id="lastname" aria-describedby="lastname" @bind-Value="heroRequest.Lastname" />
+    </div>
+
+    <div class="form-group">
+        <label for="lastname">Contact Email</label>
+        <InputText class="form-control" type="email" id="email" aria-describedby="email" @bind-Value="heroRequest.Email" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    private FrontWebBlazor.Models.HeroRequest heroRequest = new Models.HeroRequest();
+
+    private async Task HandleSubmit()
+    {
+        var service = new FrontWebBlazor.Services.RequestsService();
+        await service.SubmitRequest(heroRequest);
+
+        NavigationManager.NavigateTo("/");
+    }
+}
