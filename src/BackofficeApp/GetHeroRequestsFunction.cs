@@ -13,7 +13,7 @@ namespace BackofficeApp
     {
         [FunctionName("GetHeroRequests")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "requests")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "offers/requests")] HttpRequest req,
             [CosmosDB(databaseName:"heroapp-db",
             collectionName:"requests",
             ConnectionStringSetting = "heroapp-cosmosdb_DOCUMENTDB",
