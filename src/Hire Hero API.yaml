@@ -169,6 +169,7 @@ paths:
               $ref: '#/components/schemas/Invoice payment'
             example:
               offerId: c6dac254-4d77-4ba6-84a0-74ee60790aec
+              amount: 1000.00
       responses:
         '201':
           description: ''
