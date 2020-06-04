@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FrontWebBlazor.Models
+namespace HireHero.Shared.Models
 {
-    public class HeroRequest
+    public class OfferRequest
     {
         [Required]
         public string Powers { get; set; }

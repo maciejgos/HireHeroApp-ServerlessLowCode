@@ -1,0 +1,246 @@
+openapi: 3.0.1
+info:
+  title: Hire Hero App API
+  description: Frontoffice Azure Logic App.
+  version: ''
+paths:
+  /offers/request:
+    post:
+      summary: Request hero offer
+      description: Endpoint used by front office for request of new offer
+      operationId: manual-invoke
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            enum:
+              - application/json
+            type: ''
+        - name: Ocp-Apim-Subscription-Key
+          in: header
+          description: Subscription key
+          schema:
+            type: ''
+      requestBody:
+        description: "{\n\"powers\": \"strength, night vision\",\n\"firstname\": \"John\",\n\"lastname\": \"Stamp\",\n\"email\": \"john.stamp@outlook.com\"\n}"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/'
+            example:
+              powers: 'strength, night vision'
+              firstname: John
+              lastname: Stamp
+              email: john.stamp@outlook.com
+      responses:
+        '201':
+          description: ''
+  /offers/proposal:
+    post:
+      summary: Send offer proposal
+      operationId: send-proposal
+      parameters:
+        - name: Ocp-Apim-Subscription-Key
+          in: header
+          description: Subscription key
+          schema:
+            type: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Offer proposal'
+            example:
+              offerId: dbb31865-63e1-4e95-b0ba-eb2e8bdc47f1
+              email: john.stamp@outlook.com
+              hero:
+                name: Spider-man
+                powers:
+                  - superhuman strength
+                  - spider-sense
+                hourRate: 1000.25
+                currency: $
+      responses:
+        '201':
+          description: ''
+  /offers/requests:
+    get:
+      summary: Get offers requests
+      operationId: get-getherorequests
+      parameters:
+        - name: Ocp-Apim-Subscription-Key
+          in: header
+          description: Subscription key
+          schema:
+            type: ''
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offers requests'
+              example:
+                - Id: c6dac254-4d77-4ba6-84a0-74ee60790aec
+                  Powers: strength
+                  Firstname: Maciej
+                  Lastname: Gos
+                  Email: john.stamp@outlook.com
+                - Id: 646bac82-b851-42c7-9ba5-7c6fda5518cd
+                  Powers: strength
+                  Firstname: Maciej
+                  Lastname: Gos
+                  Email: john.stamp@outlook.com
+                - Id: dede9a5f-8d72-48c8-b696-09ef6470c42d
+                  Powers: strength
+                  Firstname: Maciej
+                  Lastname: Gos
+                  Email: john.stamp@outlook.com
+                - Id: 231933c8-e97a-4715-8213-519477fb24da
+                  Powers: strength
+                  Firstname: Maciej
+                  Lastname: Gos
+                  Email: john.stamp@outlook.com
+                - Id: 9ca17e99-0155-4ac9-a182-9c532c020a8d
+                  Powers: night vision
+                  Firstname: Maciej
+                  Lastname: Gos
+                  Email: john.stamp@outlook.com
+                - Id: e2155bb4-ea1d-4db8-b694-5c5dfc8ee065
+                  Powers: night vision
+                  Firstname: Maciej
+                  Lastname: Gos
+                  Email: john.stamp@outlook.com
+  /hero/search:
+    get:
+      summary: Search
+      operationId: search
+      parameters:
+        - name: powers
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: Ocp-Apim-Subscription-Key
+          in: header
+          description: Subscription key
+          schema:
+            type: ''
+      responses:
+        '200':
+          description: 
+  /offers/refuse:
+    post:
+      summary: Send offer refuse
+      operationId: send-offer-refuse
+      parameters:
+        - name: Ocp-Apim-Subscription-Key
+          in: header
+          description: Subscription key
+          schema:
+            type: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Offer refuse'
+            example:
+              offerId: c6dac254-4d77-4ba6-84a0-74ee60790aec
+              status: refuse
+              email: john.stamp@outlook.com
+              notes: Lack of required hero
+      responses:
+        '201':
+          description: ''
+  /invoices/payment:
+    post:
+      summary: Pay invoice
+      operationId: pay-invoice
+      parameters:
+        - name: Ocp-Apim-Subscription-Key
+          in: header
+          description: Subscription key
+          schema:
+            type: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invoice payment'
+            example:
+              offerId: c6dac254-4d77-4ba6-84a0-74ee60790aec
+              amount: 1000.00
+      responses:
+        '201':
+          description: ''
+components:
+  schemas:
+    Offers requests:
+      type: array
+      items:
+        required:
+          - Id
+          - Powers
+          - Firstname
+          - Lastname
+          - Email
+        type: object
+        properties:
+          Id:
+            type: string
+          Powers:
+            type: string
+          Firstname:
+            type: string
+          Lastname:
+            type: string
+          Email:
+            type: string
+    Offer refuse:
+      type: object
+      properties:
+        offerId:
+          type: string
+        email:
+          type: string
+        notes:
+          type: string
+    Offer proposal:
+      type: object
+      properties:
+        offerId:
+          type: string
+        email:
+          type: string
+        hero:
+          type: object
+          properties:
+            name:
+              type: string
+            powers:
+              type: array
+              items:
+                type: string
+            hourRate:
+              type: number
+            currency:
+              type: string
+    Invoice payment:
+      type: object
+      properties:
+        offerId:
+          type: string
+        amount:
+          type: integer
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: [ ]
+  - apiKeyQuery: [ ]

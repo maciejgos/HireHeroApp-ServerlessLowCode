@@ -31,11 +31,11 @@
 </EditForm>
 
 @code {
-    private FrontWebBlazor.Models.HeroRequest heroRequest = new Models.HeroRequest();
+    private HireHero.Shared.Models.OfferRequest heroRequest = new HireHero.Shared.Models.OfferRequest();
 
     private async Task HandleSubmit()
     {
-        var service = new FrontWebBlazor.Services.RequestsService();
+        var service = new HireHero.Shared.Services.OffersService();
         await service.SubmitRequest(heroRequest);
 
         NavigationManager.NavigateTo("/");
