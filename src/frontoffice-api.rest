@@ -1,31 +1,21 @@
 ### Request for hero
-POST https://heroapp-apim.azure-api.net/api/hero/request HTTP/1.1
+POST https://heroapp-apim.azure-api.net/api/offers/request HTTP/1.1
 Content-Type: application/json
 Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
 
 {
-    "powers":[
-        "superhuman strength",
-        "spider-sense"
-    ]
+    "powers": "strength, night vision",
+    "firstname": "John",
+    "lastname": "Stamp",
+    "email": "john.stamp@outlook.com"
 }
 
-### Offer for hero accepted
-POST https://heroapp-apim.azure-api.net/api/offer HTTP/1.1
+### Make payment
+POST https://.../api/invoices/payment HTTP/1.1
 Content-Type: application/json
 Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
 
 {
-    "offerId": "dbb31865-63e1-4e95-b0ba-eb2e8bdc47f1",
-    "status": "accepted"
-}
-
-### Offer for hero accepted
-POST https://heroapp-apim.azure-api.net/api/offer HTTP/1.1
-Content-Type: application/json
-Ocp-Apim-Subscription-Key: 53ab7699b93741139e8bc2a6831b1129
-
-{
-    "offerId": "dbb31865-63e1-4e95-b0ba-eb2e8bdc47f1",
-    "status": "refused"
+    "offerId": "c6dac254-4d77-4ba6-84a0-74ee60790aec",
+    "amount": 1000.00
 }
