@@ -1,7 +1,8 @@
 ﻿@page "/requests"
-@inject HttpClient Http
+@inject NavigationManager NavigationManager;
 
 @using System.Linq;
+@using HireHero.Shared.Models;
 
 <h3>New requests</h3>
 
@@ -31,7 +32,7 @@ else
                     <td>@request.Email</td>
                     <td>
                         <button type="button" class="btn btn-primary">Proposal</button>
-                        <button type="button" class="btn btn-warning">Refuse</button>
+                        <button type="button" class="btn btn-warning" @onclick="@(e => HandleRefuse(e, request))">Refuse</button>
                     </td>
                 </tr>
             }
@@ -40,7 +41,23 @@ else
 }
 
 @code {
-    private BackofficeWebBlazor.Models.HeroRequest[] requests;
+    private HireHero.Shared.Models.Request[] requests;
 
-    protected override async Task OnInitializedAsync() => requests = (await new BackofficeWebBlazor.Services.RequestsService().GetRequests()).ToArray();
+    protected override async Task OnInitializedAsync() => requests = (await new HireHero.Shared.Services.OffersService().GetRequests()).ToArray();
+
+    private async Task HandleRefuse(MouseEventArgs e, Request requestOffer)
+    {
+        Console.WriteLine("Refuse clicked.");
+
+        var request = new HireHero.Shared.Models.OfferRefuse
+        {
+            OfferId = requestOffer.Id,
+            Email = requestOffer.Email,
+            Status = HireHero.Shared.Models.ProposalStatus.Refuse,
+            Notes = ""
+        };
+
+        await new HireHero.Shared.Services.OffersService().RefuseOffer(request);
+        NavigationManager.NavigateTo("/");
+    }
 }
