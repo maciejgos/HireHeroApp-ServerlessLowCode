@@ -1,0 +1,393 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_hero_proposal_logicapp_name": {
+            "defaultValue": "hero-proposal-logicapp",
+            "type": "string"
+        },
+        "workflows_hero-proposal-logicapp_parameters_$connections": {
+            "defaultValue": {
+                "documentdb": {
+                    "connectionId": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/resourceGroups/hire-hero-app-rg/providers/Microsoft.Web/connections/documentdb",
+                    "connectionName": "documentdb",
+                    "id": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/providers/Microsoft.Web/locations/westeurope/managedApis/documentdb"
+                },
+                "outlook": {
+                    "connectionId": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/resourceGroups/hire-hero-app-rg/providers/Microsoft.Web/connections/outlook",
+                    "connectionName": "outlook",
+                    "id": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/providers/Microsoft.Web/locations/westeurope/managedApis/outlook"
+                }
+            },
+            "type": "Object"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-07-01",
+            "dependsOn": [],
+            "location": "westeurope",
+            "name": "[parameters('workflows_hero_proposal_logicapp_name')]",
+            "properties": {
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {
+                                "documentdb": {
+                                    "connectionId": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/resourceGroups/hire-hero-app-rg/providers/Microsoft.Web/connections/documentdb",
+                                    "connectionName": "documentdb",
+                                    "id": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/providers/Microsoft.Web/locations/westeurope/managedApis/documentdb"
+                                },
+                                "outlook": {
+                                    "connectionId": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/resourceGroups/hire-hero-app-rg/providers/Microsoft.Web/connections/outlook",
+                                    "connectionName": "outlook",
+                                    "id": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/providers/Microsoft.Web/locations/westeurope/managedApis/outlook"
+                                }
+                            },
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {
+                                    "properties": {
+                                        "email": {
+                                            "type": "string"
+                                        },
+                                        "hero": {
+                                            "properties": {
+                                                "currency": {
+                                                    "type": "string"
+                                                },
+                                                "hourRate": {
+                                                    "type": "number"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "powers": {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "offerId": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Compose": {
+                            "runAfter": {},
+                            "type": "Compose",
+                            "inputs": {
+                                "hero": {
+                                    "currency": "@{triggerBody()?['hero']?['currency']}",
+                                    "hourRate": "@triggerBody()?['hero']?['hourRate']",
+                                    "name": "@{triggerBody()?['hero']?['name']}",
+                                    "powers": "@triggerBody()?['hero']?['powers']"
+                                },
+                                "id": "@{triggerBody()?['offerId']}"
+                            }
+                        },
+                        "Condition": {
+                            "actions": {
+                                "Create_or_update_document_2": {
+                                    "runAfter": {
+                                        "Send_an_email_(V2)_2": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": "@outputs('Compose')",
+                                        "headers": {
+                                            "x-ms-documentdb-raw-partitionkey": "\"@{body('Parse_JSON')?['id']}\""
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/dbs/@{encodeURIComponent('heroapp-db')}/colls/@{encodeURIComponent('offers')}/docs"
+                                    }
+                                },
+                                "Delete_a_document_2": {
+                                    "runAfter": {
+                                        "Create_or_update_document_2": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "headers": {
+                                            "x-ms-documentdb-raw-partitionkey": "\"@{body('Parse_JSON')?['id']}\""
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                            }
+                                        },
+                                        "method": "delete",
+                                        "path": "/dbs/@{encodeURIComponent('heroapp-db')}/colls/@{encodeURIComponent('proposals')}/docs/@{encodeURIComponent(body('Parse_JSON')?['id'])}"
+                                    }
+                                },
+                                "Send_an_email_(V2)_2": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "Body": "<p>Hello <br>\n<br>\nYour hero is coming. @{triggerBody()?['hero']?['name']} will contact with you soon.<br>\n<br>\nRegards,<br>\nHire Hero Team</p>",
+                                            "Subject": "Congratulations you hire hero",
+                                            "To": "@triggerBody()?['email']"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['outlook']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/v2/Mail"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Query_documents_V2": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "else": {
+                                "actions": {
+                                    "Delete_a_document_3": {
+                                        "runAfter": {
+                                            "Send_an_email_(V2)_3": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "ApiConnection",
+                                        "inputs": {
+                                            "headers": {
+                                                "x-ms-documentdb-raw-partitionkey": "\"@{body('Parse_JSON')?['id']}\""
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                                }
+                                            },
+                                            "method": "delete",
+                                            "path": "/dbs/@{encodeURIComponent('heroapp-db')}/colls/@{encodeURIComponent('proposals')}/docs/@{encodeURIComponent(body('Parse_JSON')?['id'])}"
+                                        }
+                                    },
+                                    "Send_an_email_(V2)_3": {
+                                        "runAfter": {},
+                                        "type": "ApiConnection",
+                                        "inputs": {
+                                            "body": {
+                                                "Body": "<p>Hello,<br>\n<br>\nWe do not receive payment for proposal.<br>\n<br>\nRegards,<br>\nHire Hero Team</p>",
+                                                "Subject": "Payment for proposal @{body('Parse_JSON')?['id']} not done",
+                                                "To": "@triggerBody()?['email']"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['outlook']['connectionId']"
+                                                }
+                                            },
+                                            "method": "post",
+                                            "path": "/v2/Mail"
+                                        }
+                                    }
+                                }
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "not": {
+                                            "equals": [
+                                                "@body('Query_documents_V2')?['_count']",
+                                                0
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "Create_or_update_document": {
+                            "runAfter": {
+                                "Parse_JSON": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": "@body('Parse_JSON')",
+                                "headers": {
+                                    "x-ms-documentdb-is-upsert": true,
+                                    "x-ms-documentdb-raw-partitionkey": "\"@{body('Parse_JSON')?['id']}\""
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/dbs/@{encodeURIComponent('heroapp-db')}/colls/@{encodeURIComponent('proposals')}/docs"
+                            }
+                        },
+                        "Delay": {
+                            "runAfter": {
+                                "Send_an_email_(V2)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Wait",
+                            "inputs": {
+                                "interval": {
+                                    "count": 10,
+                                    "unit": "Minute"
+                                }
+                            }
+                        },
+                        "Delete_a_document": {
+                            "runAfter": {
+                                "Create_or_update_document": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "headers": {
+                                    "x-ms-documentdb-raw-partitionkey": "\"@{body('Parse_JSON')?['id']}\""
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                    }
+                                },
+                                "method": "delete",
+                                "path": "/dbs/@{encodeURIComponent('heroapp-db')}/colls/@{encodeURIComponent('requests')}/docs/@{encodeURIComponent(body('Parse_JSON')?['id'])}"
+                            }
+                        },
+                        "Parse_JSON": {
+                            "runAfter": {
+                                "Compose": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": "@outputs('Compose')",
+                                "schema": {
+                                    "properties": {
+                                        "hero": {
+                                            "properties": {
+                                                "currency": {
+                                                    "type": "string"
+                                                },
+                                                "hourRate": {
+                                                    "type": "number"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "powers": {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "id": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "Query_documents_V2": {
+                            "runAfter": {
+                                "Delay": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "QueryText": "SELECT * FROM c WHERE c.offerId = \"@{body('Parse_JSON')?['id']}\""
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/v2/dbs/@{encodeURIComponent('heroapp-db')}/colls/@{encodeURIComponent('payments')}/query"
+                            }
+                        },
+                        "Response": {
+                            "runAfter": {
+                                "Send_an_email_(V2)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Response",
+                            "kind": "Http",
+                            "inputs": {
+                                "statusCode": 201
+                            }
+                        },
+                        "Send_an_email_(V2)": {
+                            "runAfter": {
+                                "Delete_a_document": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "Body": "<p>Hello,<br>\n<br>\nPlease check our offer proposal for hire hero.<br>\n<br>\nRegards,<br>\nHire Hero Team</p>",
+                                    "Subject": "Offer proposal @{body('Parse_JSON')?['id']}",
+                                    "To": "@triggerBody()?['email']"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['outlook']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/v2/Mail"
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": "[parameters('workflows_hero-proposal-logicapp_parameters_$connections')]"
+                    }
+                },
+                "state": "Enabled"
+            },
+            "scale": null,
+            "tags": {},
+            "type": "Microsoft.Logic/workflows"
+        }
+    ],
+    "variables": {}
+}
