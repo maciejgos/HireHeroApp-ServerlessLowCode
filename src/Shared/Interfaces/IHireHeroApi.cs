@@ -11,16 +11,16 @@ namespace HireHero.Shared.Interfaces
         [Post("/offers/request")]
         Task SubmitRequest([Body] OfferRequest request);
 
-        [Get("offers/requests")]
+        [Get("/offers/requests")]
         Task<IEnumerable<Request>> GetRequests();
 
-        [Post("offers/proposal")]
+        [Post("/offers/proposal")]
         Task ProposeOffer([Body] OfferPropose propose);
 
-        [Post("offers/refuse")]
+        [Post("/offers/refuse")]
         Task RefuseOffer([Body]OfferRefuse offerRefuse);
 
-        [Post("invoices/payment")]
+        [Post("/invoices/payment")]
         Task InvoicePayment([Body] Payment payment);
     }
 }
