@@ -1,5 +1,6 @@
 ﻿@page "/requests"
 @inject NavigationManager NavigationManager;
+@inject HireHero.Shared.Services.OffersService OffersService;
 
 @using System.Linq;
 @using HireHero.Shared.Models;
@@ -43,7 +44,7 @@ else
 @code {
     private HireHero.Shared.Models.Request[] requests;
 
-    protected override async Task OnInitializedAsync() => requests = (await new HireHero.Shared.Services.OffersService().GetRequests()).ToArray();
+    protected override async Task OnInitializedAsync() => requests = (await OffersService.GetRequests()).ToArray();
 
     private async Task HandleRefuse(MouseEventArgs e, Request requestOffer)
     {
@@ -57,7 +58,7 @@ else
             Notes = ""
         };
 
-        await new HireHero.Shared.Services.OffersService().RefuseOffer(request);
+        await OffersService.RefuseOffer(request);
         NavigationManager.NavigateTo("/");
     }
 }
