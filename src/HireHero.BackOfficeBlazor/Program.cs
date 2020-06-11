@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using HireHero.Shared.Services;
+using Blazored.Modal;
 
 namespace BackofficeWebBlazor
 {
@@ -16,6 +17,9 @@ namespace BackofficeWebBlazor
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddTransient<OffersService>();
+
+            // Add Blazored.Modal
+            builder.Services.AddBlazoredModal();
 
             await builder.Build().RunAsync();
         }
