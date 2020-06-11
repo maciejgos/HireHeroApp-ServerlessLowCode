@@ -1,6 +1,7 @@
 ﻿@page "/requests"
 @inject NavigationManager NavigationManager;
 @inject HireHero.Shared.Services.OffersService OffersService;
+@inject IModalService Modal;
 
 @using System.Linq;
 @using HireHero.Shared.Models;
@@ -46,11 +47,11 @@ else
 
     protected override async Task OnInitializedAsync() => requests = (await OffersService.GetRequests()).ToArray();
 
-    private async Task HandleRefuse(MouseEventArgs e, Request requestOffer)
+    private void HandleRefuse(MouseEventArgs e, Request requestOffer)
     {
         Console.WriteLine("Refuse clicked.");
 
-        var request = new HireHero.Shared.Models.OfferRefuse
+        @* var request = new HireHero.Shared.Models.OfferRefuse
         {
             OfferId = requestOffer.Id,
             Email = requestOffer.Email,
@@ -59,6 +60,10 @@ else
         };
 
         await OffersService.RefuseOffer(request);
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/"); *@
+
+        var parameters = new ModalParameters();
+        parameters.Add("Message", "Hello from modal.");
+        Modal.Show<RefuseOfferModal>("Refuse offer", parameters);
     }
 }
