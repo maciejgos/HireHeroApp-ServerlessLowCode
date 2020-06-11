@@ -1,0 +1,208 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_hero_requests_logicapp_name": {
+            "defaultValue": "hero-requests-logicapp",
+            "type": "string"
+        },
+        "workflows_hero-requests-logicapp_parameters_$connections": {
+            "defaultValue": {
+                "documentdb": {
+                    "connectionId": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/resourceGroups/hire-hero-app-rg/providers/Microsoft.Web/connections/documentdb",
+                    "connectionName": "documentdb",
+                    "id": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/providers/Microsoft.Web/locations/westeurope/managedApis/documentdb"
+                },
+                "outlook": {
+                    "connectionId": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/resourceGroups/hire-hero-app-rg/providers/Microsoft.Web/connections/outlook",
+                    "connectionName": "outlook",
+                    "id": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/providers/Microsoft.Web/locations/westeurope/managedApis/outlook"
+                }
+            },
+            "type": "Object"
+        },
+        "workflows_hero-requests-logicapp_parameters_salespersonemail": {
+            "defaultValue": "maciej.gos@altkomsoftware.pl",
+            "type": "String"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-07-01",
+            "dependsOn": [],
+            "location": "westeurope",
+            "name": "[parameters('workflows_hero_requests_logicapp_name')]",
+            "properties": {
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {
+                                "documentdb": {
+                                    "connectionId": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/resourceGroups/hire-hero-app-rg/providers/Microsoft.Web/connections/documentdb",
+                                    "connectionName": "documentdb",
+                                    "id": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/providers/Microsoft.Web/locations/westeurope/managedApis/documentdb"
+                                },
+                                "outlook": {
+                                    "connectionId": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/resourceGroups/hire-hero-app-rg/providers/Microsoft.Web/connections/outlook",
+                                    "connectionName": "outlook",
+                                    "id": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/providers/Microsoft.Web/locations/westeurope/managedApis/outlook"
+                                }
+                            },
+                            "type": "Object"
+                        },
+                        "salespersonemail": {
+                            "defaultValue": "maciej.gos@altkomsoftware.pl",
+                            "type": "String"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {
+                                    "properties": {
+                                        "Email": {
+                                            "type": "string"
+                                        },
+                                        "Firstname": {
+                                            "type": "string"
+                                        },
+                                        "Lastname": {
+                                            "type": "string"
+                                        },
+                                        "Powers": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Compose": {
+                            "runAfter": {},
+                            "type": "Compose",
+                            "inputs": {
+                                "email": "@{triggerBody()?['Email']}",
+                                "firstname": "@{triggerBody()?['Firstname']}",
+                                "id": "@guid()",
+                                "lastname": "@{triggerBody()?['Lastname']}",
+                                "powers": "@{triggerBody()?['Powers']}"
+                            }
+                        },
+                        "Parse_JSON": {
+                            "runAfter": {
+                                "Compose": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": "@outputs('Compose')",
+                                "schema": {
+                                    "properties": {
+                                        "Email": {
+                                            "type": "string"
+                                        },
+                                        "Firstname": {
+                                            "type": "string"
+                                        },
+                                        "Lastname": {
+                                            "type": "string"
+                                        },
+                                        "Powers": {
+                                            "type": "string"
+                                        },
+                                        "id": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "Response": {
+                            "runAfter": {
+                                "Scope": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Response",
+                            "kind": "Http",
+                            "inputs": {
+                                "statusCode": 200
+                            }
+                        },
+                        "Scope": {
+                            "actions": {
+                                "Create_or_update_document": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": "@outputs('Compose')",
+                                        "headers": {
+                                            "x-ms-documentdb-raw-partitionkey": "\"@{body('Parse_JSON')?['id']}\""
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/dbs/@{encodeURIComponent('heroapp-db')}/colls/@{encodeURIComponent('requests')}/docs"
+                                    }
+                                },
+                                "Send_an_email_(V2)": {
+                                    "runAfter": {
+                                        "Create_or_update_document": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "Body": "<p>Offer ID: @{body('Parse_JSON')?['id']}<br>\nRequested powers:@{string(body('Parse_JSON')?['powers'])}</p>",
+                                            "Subject": "New offer requested @{body('Parse_JSON')?['id']}",
+                                            "To": "@parameters('salespersonemail')"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['outlook']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/v2/Mail"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Parse_JSON": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Scope"
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": "[parameters('workflows_hero-requests-logicapp_parameters_$connections')]"
+                    },
+                    "salespersonemail": {
+                        "value": "[parameters('workflows_hero-requests-logicapp_parameters_salespersonemail')]"
+                    }
+                },
+                "state": "Enabled"
+            },
+            "scale": null,
+            "tags": {},
+            "type": "Microsoft.Logic/workflows"
+        }
+    ],
+    "variables": {}
+}

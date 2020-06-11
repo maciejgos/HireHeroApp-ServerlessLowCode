@@ -2,6 +2,6 @@
 {
     public enum ProposalStatus
     {
-        NoOffer, Propose
+        Refuse
     }
 }

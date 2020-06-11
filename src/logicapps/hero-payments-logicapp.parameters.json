@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_hero_payments_logicapp_name": {
+            "value": "hero-payments-logicapp"
+        },
+        "workflows_hero-payments-logicapp_parameters_$connections": {
+            "value": {
+                "documentdb": {
+                    "connectionId": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/resourceGroups/hire-hero-app-rg/providers/Microsoft.Web/connections/documentdb",
+                    "connectionName": "documentdb",
+                    "id": "/subscriptions/c0e61191-dce3-4eb8-bb45-36c5dfd0acf4/providers/Microsoft.Web/locations/westeurope/managedApis/documentdb"
+                }
+            }
+        },
+        "workflows_hero-payments-logicapp_parameters_salespersonemail": {
+            "value": "maciej.gos@altkomsoftware.pl"
+        }
+    }
+}

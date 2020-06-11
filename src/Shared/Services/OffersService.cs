@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using HireHero.Shared.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HireHero.Shared.Services
@@ -10,6 +11,20 @@ namespace HireHero.Shared.Services
         {
             Guard.Against.Null(request, nameof(request));
             await _heroApi.SubmitRequest(request);
+        }
+
+        public async Task<IEnumerable<Request>> GetRequests() => await _heroApi.GetRequests();
+
+        public async Task ProposeOffer(OfferPropose offer)
+        {
+            Guard.Against.Null(offer, nameof(offer));
+            await _heroApi.ProposeOffer(offer);
+        }
+
+        public async Task RefuseOffer(OfferRefuse refuse)
+        {
+            Guard.Against.Null(refuse, nameof(refuse));
+            await _heroApi.RefuseOffer(refuse);
         }
     }
 }
