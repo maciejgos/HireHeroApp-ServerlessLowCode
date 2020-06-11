@@ -1,18 +1,55 @@
-<div>
+@inject HireHero.Shared.Services.OffersService OffersService;
 
-    <p>@Message</p>
+@using HireHero.Shared.Models;
+
+@* Issue with form validation - Form submission canceled because the form is not connected *@
+<EditForm Model="@offerRefuse" OnSubmit="SubmitForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label" for="OfferId">Request ID</label>
+        <div class="col-sm-8">
+            <input class="form-control" type="text" placeholder="@offerRefuse.OfferId" readonly>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label" for="Notes">Notes</label>
+        <div class="col-sm-8">
+            <textarea class="form-control" type="text" @bind="offerRefuse.Notes" />
+        </div>
+    </div>
 
     <button @onclick="SubmitForm" class="btn btn-primary">Submit</button>
-    <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
-</div>
+    <button @onclick="BlazoredModal.Cancel" class="btn btn-secondary">Cancel</button>
+</EditForm>
 
 @code {
 
-    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+    [CascadingParameter] 
+    BlazoredModalInstance BlazoredModal { get; set; }
     
-    [Parameter] public string Message { get; set; }
+    [Parameter] 
+    public Request OfferRequest { get; set; }
 
-    void SubmitForm() => BlazoredModal.Close();
-    void Cancel() => BlazoredModal.Cancel();
+    private OfferRefuse offerRefuse;
 
+    protected override void OnInitialized()
+    {
+        offerRefuse = new OfferRefuse
+        {
+            OfferId = OfferRequest.Id,
+            Email = OfferRequest.Email,
+            Status = HireHero.Shared.Models.ProposalStatus.Refuse,
+            Notes = ""
+        };
+    }
+
+    private async Task SubmitForm()
+    {
+        await OffersService.RefuseOffer(offerRefuse);
+        BlazoredModal.Close();    
+    }
+
+    private void Cancel() => BlazoredModal.Cancel();
 }
