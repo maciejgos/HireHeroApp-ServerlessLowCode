@@ -49,21 +49,8 @@ else
 
     private void HandleRefuse(MouseEventArgs e, Request requestOffer)
     {
-        Console.WriteLine("Refuse clicked.");
-
-        @* var request = new HireHero.Shared.Models.OfferRefuse
-        {
-            OfferId = requestOffer.Id,
-            Email = requestOffer.Email,
-            Status = HireHero.Shared.Models.ProposalStatus.Refuse,
-            Notes = ""
-        };
-
-        await OffersService.RefuseOffer(request);
-        NavigationManager.NavigateTo("/"); *@
-
         var parameters = new ModalParameters();
-        parameters.Add("Message", "Hello from modal.");
+        parameters.Add("OfferRequest", requestOffer);
         Modal.Show<RefuseOfferModal>("Refuse offer", parameters);
     }
 }
