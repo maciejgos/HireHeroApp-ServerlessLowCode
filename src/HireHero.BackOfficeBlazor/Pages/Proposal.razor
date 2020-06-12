@@ -1,0 +1,74 @@
+@page "/requests/proposal/{id:guid}"
+
+@inject NavigationManager NavigationManager;
+@inject HireHero.Shared.Services.OffersService OffersService;
+
+@using HireHero.Shared.Models;
+ 
+<EditForm Model="@proposal" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-row">
+        <div class="col">
+            <label>Offer @proposal.OfferId</label>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            <label>Requested powers: </label>
+            <label>strength</label>
+        </div>
+        <div class="col">
+            <button type="button" class="btn btn-primary">Search Hero</button>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            <label>Hero name: </label>
+            <label>@proposal.Hero.Name</label>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            <label>Hour salary: </label>
+            <label>@proposal.Hero.GetFormattedSalary()</label>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-success">Submit</button>
+    <button type="button" class="btn btn-danger">Refuse</button>
+    <button type="button" class="btn btn-secondary">Cancel</button>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private OfferPropose proposal;
+
+    protected override void OnInitialized()
+    {
+        proposal = new OfferPropose
+        {
+            OfferId = Id.ToString(),
+            Email = "Request.Email",
+            Hero = new Hero
+            {
+                Name = "Spiderman",
+                Currency = "$",
+                HourPrice = 56.23,
+                Powers = new[] {
+                    "strength",
+                    "nigth vision"
+                }
+            }
+        };
+    }
+
+    private void HandleValidSubmit()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
