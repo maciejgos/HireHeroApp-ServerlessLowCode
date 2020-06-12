@@ -33,7 +33,7 @@ else
                     <td>@request.Powers</td>
                     <td>@request.Email</td>
                     <td>
-                        <button type="button" class="btn btn-primary">Proposal</button>
+                        <button type="button" class="btn btn-primary" @onclick="@(e => HandleProposal(e, request))">Proposal</button>
                         <button type="button" class="btn btn-warning" @onclick="@(e => HandleRefuse(e, request))">Refuse</button>
                     </td>
                 </tr>
@@ -52,5 +52,10 @@ else
         var parameters = new ModalParameters();
         parameters.Add("OfferRequest", requestOffer);
         Modal.Show<RefuseOfferModal>("Refuse offer", parameters);
+    }
+
+    private void HandleProposal(MouseEventArgs e, Request offerRequest)
+    {
+        NavigationManager.NavigateTo($"/requests/proposal/{offerRequest.Id}");
     }
 }
