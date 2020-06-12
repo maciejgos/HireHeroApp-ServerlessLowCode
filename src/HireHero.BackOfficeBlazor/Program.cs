@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using HireHero.Shared.Services;
 using Blazored.Modal;
 
-namespace BackofficeWebBlazor
+namespace HireHero.BackOfficeBlazor
 {
     public class Program
     {
