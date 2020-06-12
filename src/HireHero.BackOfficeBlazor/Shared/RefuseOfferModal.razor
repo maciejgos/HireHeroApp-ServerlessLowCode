@@ -3,7 +3,7 @@
 @using HireHero.Shared.Models;
 
 @* Issue with form validation - Form submission canceled because the form is not connected *@
-<EditForm Model="@offerRefuse" OnSubmit="SubmitForm">
+<EditForm Model="@offerRefuse" OnValidSubmit="SubmitForm">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <button @onclick="SubmitForm" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
     <button @onclick="BlazoredModal.Cancel" class="btn btn-secondary">Cancel</button>
 </EditForm>
 
