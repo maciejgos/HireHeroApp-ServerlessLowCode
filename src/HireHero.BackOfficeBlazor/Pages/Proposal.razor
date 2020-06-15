@@ -2,10 +2,12 @@
 
 @inject NavigationManager NavigationManager;
 @inject HireHero.Shared.Services.OffersService OffersService;
+@inject IModalService Modal;
 
 @using HireHero.Shared.Models;
- 
-<EditForm Model="@proposal" OnValidSubmit="HandleValidSubmit">
+@using Ardalis.GuardClauses;
+
+<EditForm EditContext="@editContext" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -35,10 +37,10 @@
             <label>@proposal.Hero.GetFormattedSalary()</label>
         </div>
     </div>
-    
+
     <button type="submit" class="btn btn-success">Submit</button>
-    <button type="button" class="btn btn-danger">Refuse</button>
-    <button type="button" class="btn btn-secondary">Cancel</button>
+    <button type="button" class="btn btn-danger" @onclick="HandleRefuse">Refuse</button>
+    <button type="button" class="btn btn-secondary" @onclick="HandleCancel">Cancel</button>
 </EditForm>
 
 @code {
@@ -47,27 +49,35 @@
     public Guid Id { get; set; }
 
     private OfferPropose proposal;
+    private Request offerRequest;
+    private EditContext editContext;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        proposal = new OfferPropose
-        {
-            OfferId = Id.ToString(),
-            Email = "Request.Email",
-            Hero = new Hero
-            {
-                Name = "Spiderman",
-                Currency = "$",
-                HourPrice = 56.23,
-                Powers = new[] {
-                    "strength",
-                    "nigth vision"
-                }
-            }
-        };
+        offerRequest = await OffersService.GetRequest(Id);
+
+        Guard.Against.Null(offerRequest, nameof(offerRequest));
+
+        proposal = new OfferPropose();
+        proposal.SetOfferId(offerRequest.Id);
+        proposal.SetEmail(offerRequest.Email);
+
+        editContext = new EditContext(proposal);
     }
 
     private void HandleValidSubmit()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void HandleRefuse()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add("OfferRequest", offerRequest);
+        Modal.Show<RefuseOfferModal>("Refuse offer", parameters);
+    }
+
+    private void HandleCancel()
     {
         NavigationManager.NavigateTo("/");
     }
