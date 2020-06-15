@@ -1,5 +1,6 @@
 ﻿using HireHero.Shared.Models;
 using Refit;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,6 +14,9 @@ namespace HireHero.Shared.Interfaces
 
         [Get("/offers/requests")]
         Task<IEnumerable<Request>> GetRequests();
+
+        [Get("/offers/requests/{id}")]
+        Task<Request> GetRequest(Guid id);
 
         [Post("/offers/proposal")]
         Task ProposeOffer([Body] OfferPropose propose);

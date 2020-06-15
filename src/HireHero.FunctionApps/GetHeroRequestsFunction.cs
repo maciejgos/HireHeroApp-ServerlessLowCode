@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -7,12 +6,12 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace BackofficeApp
+namespace HireHero.FunctionApp
 {
     public class GetHeroRequestsFunction
     {
         [FunctionName("GetHeroRequests")]
-        public async Task<IActionResult> Run(
+        public IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "offers/requests")] HttpRequest req,
             [CosmosDB(databaseName:"heroapp-db",
             collectionName:"requests",
@@ -25,14 +24,5 @@ namespace BackofficeApp
 
             return new OkObjectResult(JsonConvert.SerializeObject(requests));
         }
-    }
-
-    public class Request
-    {
-        public string Id { get; set; }
-        public string Powers { get; set; }
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
-        public string Email { get; set; }
     }
 }

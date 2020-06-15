@@ -7,5 +7,6 @@ namespace HireHero.Shared.Models
         public string Currency { get; set; }
         public string[] Powers { get; set; }
 
+        public string GetFormattedSalary() => $"{Currency}{HourPrice}";
     }
 }
