@@ -16,7 +16,11 @@ Below diagram shows high level overview of Azure architecture and used component
 [Required libraries]
 
 ## Components
-[List of PaaS elements used and code]
+Low code approach forced to use some specific Azure components. Below is whole infrastructure components used in this demo.
+- [API Management](https://azure.microsoft.com/en-us/services/api-management/) - In this demo exists as gateway for our application
+- [Logic Apps](https://azure.microsoft.com/en-us/services/logic-apps/) - Process our requests and implements some workflow functionalities
+- [Azure Functions](https://azure.microsoft.com/en-us/services/functions/) - Used to return offer requests data
+- [Azure Cosmos DB](https://azure.microsoft.com/en-us/services/cosmos-db/) - Store our data in Fast NoSQL database
 
 ## Known issues
 [List of issues discovered during implementation or not implemented features]
