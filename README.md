@@ -1,5 +1,5 @@
 
-Hire hero company is a project which showcase simple implementation of Workflow process using low code approach. Whole concept of a project is to use as much of cloud native components as possible.
+Hire hero company is a project which showcase simple implementation of Workflow process using low code approach. Whole concept of a project is to use as much of cloud native components as possible without writing code.
 
 ## The Plan
 1. Implementation of basic workflow using Logic Apps
