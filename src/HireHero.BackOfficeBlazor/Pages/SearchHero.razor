@@ -1,0 +1,55 @@
+﻿@page "/requests/searchHero/{id:guid}"
+
+@inject NavigationManager NavigationManager;
+@inject HireHero.Shared.Services.OffersService OffersService;
+
+@using HireHero.Shared.Models;
+@using Ardalis.GuardClauses;
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <span>Request ID: </span>
+        </div>
+        <div class="col">
+            <span>@request.Id</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <span>Requested powers: </span>
+        </div>
+        <div class="col">
+            <span>@request.Powers</span>
+        </div>
+    </div>
+    <hr />
+    <div class="input-group">
+        <input class="form-control py-2 rounded-pill mr-1 pr-5" type="search" value="@searchText">
+        <span class="input-group-append">
+            <button class="btn rounded-pill border-0 ml-n5" type="button" @onclick="Search">
+                <i class="fa fa-search"></i>
+            </button>
+        </span>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private Request request = new Request();
+
+    private string searchText;
+
+    protected override async Task OnInitializedAsync()
+    {
+        request = await OffersService.GetRequest(Id);
+    }
+
+    private Task Search()
+    {
+        throw new NotImplementedException();
+    }
+}
