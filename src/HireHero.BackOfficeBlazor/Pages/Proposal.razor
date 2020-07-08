@@ -22,7 +22,7 @@
             <label>strength</label>
         </div>
         <div class="col">
-            <button type="button" class="btn btn-primary">Search Hero</button>
+            <button type="button" class="btn btn-primary" @onclick="SearchHero">Search Hero</button>
         </div>
     </div>
     <div class="form-row">
@@ -63,6 +63,11 @@
         proposal.SetEmail(offerRequest.Email);
 
         editContext = new EditContext(proposal);
+    }
+
+    private void SearchHero()
+    {
+        Modal.Show<SearchHeroModal>("Search Hero");
     }
 
     private void HandleValidSubmit()
